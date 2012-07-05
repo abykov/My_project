@@ -8,5 +8,3 @@ res = netsnmp.snmpwalk(oid, Version = 2, DestHost='172.18.82.20', Community='tes
 print res
 
 
-
-
