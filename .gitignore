@@ -2,4 +2,7 @@
 *.txt
 *.swn
 *.swp
-*.Swo
+*.swo
+*.pyc
+.*
+!.gitignore
