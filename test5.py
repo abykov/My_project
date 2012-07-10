@@ -53,9 +53,10 @@ for i in range(len(res)):
     w=bin(int(res[i].encode("hex"), 16))[2:]
     if len(w)<96:
         w='0'*(96-len(w))+w
-    print w
+    A[i+1][1:]=w[:47]
+    #print w
 
-print '\n=============================================\n'
+#print '\n=============================================\n'
 
 res2 = RES(OID2)
 
@@ -63,7 +64,7 @@ for i in range(len(res2)):
     ww=bin(int(res2[i].encode("hex"), 16))[2:]
     if len(ww)<96:
         ww='0'*(96-len(ww))+ww
-    print ww
+    #print ww
 
 for i in range(len(res1)+1):
     print A[i]
