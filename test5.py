@@ -2,15 +2,18 @@ import netsnmp
 import os
 from log import *
 
-os.system('snmpwalk -v2c -c test2012 172.18.82.20 .1.3.6.1.2.1.17.7.1.4.3.1.1 > qwe.dat')
-file=open('qwe.dat')
+
+string='snmpwalk -v2c -c '+COMMUNITY+' '+IP+' '+OID1+'  > log.dat'
+os.system(string)
+file=open('log.dat')
+
 N=len(file.readlines())
 
 
 def number_of_vlan(j):
     i=0
     A=[]
-    file=open('qwe.dat')
+    file=open('log.dat')
     while i<N:
         x=file.readline()
         s=x.split(' ')
@@ -44,10 +47,6 @@ while i<len(res1)+1:
     i+=1
 
 
-
-for i in range(len(res1)+1):
-    print A[i]
-
 res=RES(OID)
 
 for i in range(len(res)):
@@ -65,6 +64,9 @@ for i in range(len(res2)):
     if len(ww)<96:
         ww='0'*(96-len(ww))+ww
     print ww
+
+for i in range(len(res1)+1):
+    print A[i]
 
 
 #for i in range(len(res_ports)):
