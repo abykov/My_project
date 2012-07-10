@@ -1,13 +1,17 @@
 import netsnmp
 from log import *
 
-oid1 = netsnmp.VarList(netsnmp.Varbind(OID1))
-res1 = netsnmp.snmpwalk(oid1, Version = 2, DestHost=IP, Community=COMMUNITY)
+def RES(OID):
+    oid = netsnmp.VarList(netsnmp.Varbind(OID))
+    res = netsnmp.snmpwalk(oid, Version = 2, DestHost=IP, Community=COMMUNITY)
+    return res
 
-oid_ports = netsnmp.VarList(netsnmp.Varbind(OID_PORTS))
-res_ports = netsnmp.snmpwalk(oid_ports, Version = 2, DestHost=IP, Community=COMMUNITY)
+
+res1 = RES(OID1)
+res_ports = RES(OID_PORTS)
 
 res_ports=res_ports[9:]
+
 
 A = []
 A = [0] * (len(res1)+1)
@@ -21,8 +25,7 @@ while i<len(res1)+1:
     A[i][0]=res1[i-1]
     i+=1
 
-oid = netsnmp.VarList(netsnmp.Varbind(OID))
-res = netsnmp.snmpwalk(oid, Version = 2, DestHost=IP, Community=COMMUNITY)
+res=RES(OID)
 
 for i in range(len(res)):
     w=bin(int(res[i].encode("hex"), 16))[2:]
@@ -32,11 +35,13 @@ for i in range(len(res)):
 
 print '\n=============================================\n'
 
-oid2 = netsnmp.VarList(netsnmp.Varbind(OID2))
-res2 = netsnmp.snmpwalk(oid2, Version = 2, DestHost=IP, Community=COMMUNITY)
+res2 = RES(OID2)
 
 for i in range(len(res2)):
     ww=bin(int(res2[i].encode("hex"), 16))[2:]
     if len(ww)<96:
         ww='0'*(96-len(ww))+ww
     print ww
+
+#for i in range(len(res_ports)):
+#    print ww[i*2],' ',ww[i*2+1]

@@ -1,8 +1,8 @@
 *~
 *.txt
+*.pyc
 *.swn
 *.swp
 *.swo
-*.pyc
 .*
 !.gitignore
