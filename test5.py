@@ -6,8 +6,19 @@ from log import *
 string='snmpwalk -v2c -c '+COMMUNITY+' '+IP+' '+OID1+'  > log.dat'
 os.system(string)
 file=open('log.dat')
+f_out=open('qwe1.txt','w')
 
 N=len(file.readlines())
+
+def HTML(b,M,N):
+    f_out=open('qwe1.html','w')
+    f_out.write('<html><head><title>Table </title></head><body><p>Table.</p><table border="1"><tr>\n')
+    for i in range(M):
+        for j in range(N):
+            f_out.write('<td>'+b[i][j]+'</td>\n')
+        f_out.write('</tr><tr>\n')
+    f_out.write('</tr></table></body></html>')
+    f_out.close()
 
 
 def number_of_vlan(j):
@@ -35,11 +46,12 @@ res_ports=res_ports[9:]
 
 
 A = []
-A = [0] * (len(res1)+1)
+A = ['0'] * (len(res1)+1)
 for i in range(len(res1)+1):
-    A[i] = [0] * (len(res_ports)+1)
+    A[i] = ['0'] * (len(res_ports)+1)
 
 A[0][1:]=res_ports
+
 
 i=1
 while i<len(res1)+1:
@@ -53,10 +65,8 @@ for i in range(len(res)):
     w=bin(int(res[i].encode("hex"), 16))[2:]
     if len(w)<96:
         w='0'*(96-len(w))+w
-    A[i+1][1:]=w[:47]
-    #print w
+    A[i+1][1:]=w[:48]
 
-#print '\n=============================================\n'
 
 res2 = RES(OID2)
 
@@ -64,11 +74,6 @@ for i in range(len(res2)):
     ww=bin(int(res2[i].encode("hex"), 16))[2:]
     if len(ww)<96:
         ww='0'*(96-len(ww))+ww
-    #print ww
-
-for i in range(len(res1)+1):
-    print A[i]
 
 
-#for i in range(len(res_ports)):
-#    print ww[i*2],' ',ww[i*2+1]
+HTML(A,len(res1)+1,len(res_ports)+1)
