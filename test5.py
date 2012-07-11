@@ -6,16 +6,16 @@ from log import *
 string='snmpwalk -v2c -c '+COMMUNITY+' '+IP+' '+OID1+'  > log.dat'
 os.system(string)
 file=open('log.dat')
-f_out=open('qwe1.txt','w')
+
 
 N=len(file.readlines())
 
 def HTML(b,M,N):
-    f_out=open('qwe1.html','w')
+    f_out=open('Table.html','w')
     f_out.write('<html><head><title>Table </title></head><body><p>Table.</p><table border="1"><tr>\n')
-    for i in range(M):
-        for j in range(N):
-            f_out.write('<td>'+b[i][j]+'</td>\n')
+    for i in range(N):
+        for j in range(M):
+            f_out.write('<td>'+b[j][i]+'</td>\n')
         f_out.write('</tr><tr>\n')
     f_out.write('</tr></table></body></html>')
     f_out.close()
