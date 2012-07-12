@@ -47,16 +47,18 @@ def RES(OID):
 res1 = RES(OID1)
 res_ports = RES(OID_PORTS)
 
-i=1
+
+NN=0
+while res_ports[NN]!=res1[1]:
+    NN+=1
+
 s=()
-while i<4:
-    t='Trk'+str(i)
+for i in range(NN-1):
+    t='Port '+res_ports[i]
     w=t,
     s=s+w
-    i+=1
 
-
-res_ports = res_ports[9:]+s
+res_ports=s
 
 A = []
 A = ['0'] * (len(res1) + 1)
@@ -77,11 +79,7 @@ for i in range(len(res)):
     if len(w) < 96:
         w = '0' * (96 - len(w)) + w
     A[i + 1][1:] = w[:len(res_ports)+1]
-    '''print w
 
-print '\n=======================\n'
-for i in range(len(res)):
-    print A[i]'''
 
 res2 = RES(OID2)
 
@@ -89,7 +87,6 @@ for i in range(len(res2)):
     ww = bin(int(res2[i].encode("hex"), 16))[2:]
     if len(ww) < 96:
         ww = '0' * (96 - len(ww)) + ww
-    #print ww
     j = 0
     for j in range(len(res_ports) + 1):
         if ww[j] == '1': A[i + 1][j + 1] = '2'
