@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import netsnmp
 import os
 from log import *
@@ -9,7 +10,7 @@ file = open('log.dat')
 
 N = len(file.readlines())
 
-def HTML(b, M, N):
+def HTML(b, M, N):   #создание html документа
     f_out = open('Table.html', 'w')
     f_out.write(
         '<html><head><title>Table</title></head><body><p align = "center"><b >Table</b></p>'
@@ -47,18 +48,17 @@ def RES(OID):
 res1 = RES(OID1)
 res_ports = RES(OID_PORTS)
 
+NN = 0
+while res_ports[NN] != res1[1]:
+    NN += 1
 
-NN=0
-while res_ports[NN]!=res1[1]:
-    NN+=1
+s = ()
+for i in range(NN - 1):
+    t = 'Port ' + res_ports[i]
+    w = t,
+    s = s + w
 
-s=()
-for i in range(NN-1):
-    t='Port '+res_ports[i]
-    w=t,
-    s=s+w
-
-res_ports=s
+res_ports = s
 
 A = []
 A = ['0'] * (len(res1) + 1)
@@ -78,8 +78,7 @@ for i in range(len(res)):
     w = bin(int(res[i].encode("hex"), 16))[2:]
     if len(w) < 96:
         w = '0' * (96 - len(w)) + w
-    A[i + 1][1:] = w[:len(res_ports)+1]
-
+    A[i + 1][1:] = w[:len(res_ports) + 1]
 
 res2 = RES(OID2)
 
