@@ -14,6 +14,7 @@ OID_UNTAG_PORTS = '.1.3.6.1.2.1.17.7.1.4.3.1.4' #untagged vlan
 OID_SWITCHE_NAMES = '.1.3.6.1.2.1.1.1.0'
 
 
+err_message ='SNMP has returned zero bytes.'
 key_string = 'Trk'
 name_port = 'Port '
 out_file = 'log.dat'

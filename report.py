@@ -1,21 +1,33 @@
 # -*- coding: utf-8 -*-
 import netsnmp
 import os
-from log import *
+from config import *
 
 def Report_on_switche(COMMUNITY, IP, html_file):
     '''Creates a table of vlans and ports for switches'''
     string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' > ' + out_file
     os.system(string)
-    logfile = open(out_file)
+
+    try:
+        logfile = open(out_file)
+    except IOError as ErrorMess:
+        print ErrorMess
 
     length_logfiles = len(logfile.readlines())
 
 
     def RES(OID):
         '''From the value of oid returns parameters'''
-        oid = netsnmp.VarList(netsnmp.Varbind(OID))
-        res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
+        try:
+            oid = netsnmp.VarList(netsnmp.Varbind(OID))
+            res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
+
+            if res == ():
+                raise RuntimeError(err_message)
+        except RuntimeError as ErrorMess:
+                print ErrorMess
+                exit(0)
+
         return res
 
 
@@ -38,7 +50,7 @@ def Report_on_switche(COMMUNITY, IP, html_file):
 
 
     def number_of_vlan(number):
-        '''Returns the number of network'''
+        '''Returns the number of vlan'''
         i = 0
         array = []
         logfile = open(out_file)
