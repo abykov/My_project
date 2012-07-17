@@ -1,10 +1,13 @@
-# -*- coding: utf-8 -*-
 import netsnmp
 import os
 from config import *
 
 def Report_on_switche(COMMUNITY, IP, html_file):
-    '''Creates a table of vlans and ports for switches'''
+    '''
+    Report_on_switche(COMMUNITY, IP, html_file)
+
+    Use this function to creates a table of vlans and ports for switches. The main function.
+    '''
     string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' > ' + out_file
     os.system(string)
 
@@ -12,12 +15,17 @@ def Report_on_switche(COMMUNITY, IP, html_file):
         logfile = open(out_file)
     except IOError as ErrorMess:
         print ErrorMess
+        exit()
 
     length_logfiles = len(logfile.readlines())
 
 
     def RES(OID):
-        '''From the value of oid returns parameters'''
+        '''
+        RES(OID)
+
+        From the value of oid returns parameters.
+        '''
         try:
             oid = netsnmp.VarList(netsnmp.Varbind(OID))
             res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
@@ -26,23 +34,27 @@ def Report_on_switche(COMMUNITY, IP, html_file):
                 raise RuntimeError(err_message)
         except RuntimeError as ErrorMess:
                 print ErrorMess
-                exit(0)
+                exit()
 
         return res
 
 
-    def HTML(array_to_print, width_array, length_array):
-        '''Creates a html page with a table '''
+    def HTML(array_to_html, width_array, length_array):
+        '''
+        HTML(array_to_html, width_array, length_array)
+
+        This function creates a html page with a table.
+        '''
         file_out = open(html_file, 'w')
         file_out.write(
             '<html><head><title>' + title + '</title></head><body><p align = "center"><b >' + title + '</b></p>'
             '<table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr >\n')
         for i in range(length_array):
             for j in range(width_array):
-                if array_to_print[j][i] == '1': char = 'T'
-                elif array_to_print[j][i] == '2': char = 'U'
-                elif array_to_print[j][i] == '0': char = "-"
-                else: char = array_to_print[j][i]
+                if array_to_html[j][i] == '1': char = 'T'
+                elif array_to_html[j][i] == '2': char = 'U'
+                elif array_to_html[j][i] == '0': char = "-"
+                else: char = array_to_html[j][i]
                 file_out.write('<td  align = "center">' + char + '</td>\n')
             file_out.write('</tr><tr >\n')
         file_out.write('</tr></table></body></html>')
@@ -50,7 +62,11 @@ def Report_on_switche(COMMUNITY, IP, html_file):
 
 
     def number_of_vlan(number):
-        '''Returns the number of vlan'''
+        '''
+        number_of_vlan(number)
+
+        This function returns the number of vlan.
+        '''
         i = 0
         array = []
         logfile = open(out_file)
@@ -60,7 +76,6 @@ def Report_on_switche(COMMUNITY, IP, html_file):
             array.append(s[0][29:])
             i += 1
         return array[number]
-
 
     list_vlans_names = RES(OID_VLANS_NAMES)
     list_ports = RES(OID_PORTS)
