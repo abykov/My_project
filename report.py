@@ -1,15 +1,19 @@
 import netsnmp
+import xmlrpclib
 import os
 from config import *
 
-def Report_on_switche(COMMUNITY, IP, html_file):
+def Report_on_switch(COMMUNITY, IP):
     '''
-    Report_on_switche(COMMUNITY, IP, html_file)
+    Report_on_switch(COMMUNITY, IP, html_file)
 
     Use this function to creates a table of vlans and ports for switches. The main function.
     '''
     string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' > ' + out_file
     os.system(string)
+
+    Wiki = xmlrpclib.ServerProxy(WIKI_URL)
+    WikiToken = Wiki.confluence2.login(WIKI_USER, WIKI_PASS)
 
     try:
         logfile = open(out_file)
@@ -20,31 +24,50 @@ def Report_on_switche(COMMUNITY, IP, html_file):
     length_logfiles = len(logfile.readlines())
 
 
-    def RES(OID):
+    def RES(OID, snmp_request):
         '''
         RES(OID)
 
         From the value of oid returns parameters.
         '''
         try:
-            oid = netsnmp.VarList(netsnmp.Varbind(OID))
-            res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
-
+            if snmp_request == 'get':
+                res = netsnmp.snmpget(OID, Version=2, DestHost=IP, Community=COMMUNITY)
+            else:
+                oid = netsnmp.VarList(netsnmp.Varbind(OID))
+                res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
             if res == ():
                 raise RuntimeError(err_message)
         except RuntimeError as ErrorMess:
                 print ErrorMess
                 exit()
-
         return res
 
 
-    def HTML(array_to_html, width_array, length_array):
+    def number_of_vlan(number):
+        '''
+        number_of_vlan(number)
+
+        This function returns the number of vlan.
+        '''
+        i = 0
+        my_array = []
+        logfile = open(out_file)
+        while i < length_logfiles:
+            x = logfile.readline()
+            s = x.split(' ')
+            my_array.append(s[0][29:]) #[29:] - 29 item numbers begin number of vlan
+            i += 1
+        return my_array[number]
+
+
+    def HTML(array_to_html, width_array, length_array, title):
         '''
         HTML(array_to_html, width_array, length_array)
 
         This function creates a html page with a table.
         '''
+        html_file = title+'.html'
         file_out = open(html_file, 'w')
         file_out.write(
             '<html><head><title>' + title + '</title></head><body><p align = "center"><b >' + title + '</b></p>'
@@ -61,24 +84,48 @@ def Report_on_switche(COMMUNITY, IP, html_file):
         file_out.close()
 
 
-    def number_of_vlan(number):
+    def WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki):
         '''
-        number_of_vlan(number)
+        WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki)
 
-        This function returns the number of vlan.
+        This function sends the table to the specified wiki page
+        and create a new page, if this page does not exist.
         '''
-        i = 0
-        array = []
-        logfile = open(out_file)
-        while i < length_logfiles:
-            x = logfile.readline()
-            s = x.split(' ')
-            array.append(s[0][29:])
-            i += 1
-        return array[number]
+        content = ''
+        for i in range(length_array):
+            for j in range(width_array):
+                if j == 0:
+                    content += '||' + array_to_wiki[j][i]
+                    if i == length_array-1: content += '||'
+                else:
+                    if array_to_wiki[j][i] == '1': char = 'T'
+                    elif array_to_wiki[j][i] == '2': char = 'U'
+                    elif array_to_wiki[j][i] == '0': char = "-"
+                    else: char = array_to_wiki[j][i]
+                    content += '|' + char
+            content += '|\n'
+        try:
+            page = Wiki.confluence2.getPage(WikiToken, SPACE, name_page)
+        except:
+            parent = Wiki.confluence2.getPage(WikiToken, SPACE, TOP_PAGE)
+            table_headers = title+'\n'
+            page = {
+                'parentId': parent['id'],
+                'space': SPACE,
+                'title': title,
+                'content': table_headers + content
+                   }
+            Wiki.confluence1.storePage(WikiToken, page)
+        else:
+            page['content'] += content
+            Wiki.confluence1.updatePage(WikiToken, page, {'versionComment':'','minorEdit':1})
 
-    list_vlans_names = RES(OID_VLANS_NAMES)
-    list_ports = RES(OID_PORTS)
+
+    title = RES(OID_SWITCH_NAME, 'get')[0]
+
+
+    list_vlans_names = RES(OID_VLANS_NAMES, 'walk')
+    list_ports = RES(OID_PORTS, 'walk')
     ports_numbers = list_ports
 
     quantity_of_ports = 0
@@ -106,23 +153,23 @@ def Report_on_switche(COMMUNITY, IP, html_file):
         vlans_ports[i][0] = list_vlans_names[i - 1] + ' ' + number_of_vlan(i - 1)
         i += 1
 
-    list_tag_vlans = RES(OID_TAG_PORTS)
+    list_tag_vlans = RES(OID_TAG_PORTS, 'walk')
 
     for i in range(len(list_tag_vlans)):
-        number_teg_port = bin(int(list_tag_vlans[i].encode('hex'), 16))[2:]
-        if len(number_teg_port) < 96:
-            number_teg_port = '0' * (96 - len(number_teg_port)) + number_teg_port
-        vlans_ports[i + 1][1:] = number_teg_port
+        number_tag_port = bin(int(list_tag_vlans[i].encode('hex'), 16))[2:]
+        if len(number_tag_port) < 96:
+            number_tag_port = '0' * (96 - len(number_tag_port)) + number_tag_port
+        vlans_ports[i + 1][1:] = number_tag_port
 
-    list_untag_vlans = RES(OID_UNTAG_PORTS)
+    list_untag_vlans = RES(OID_UNTAG_PORTS, 'walk')
 
     for i in range(len(list_untag_vlans)):
-        number_unteg_port = bin(int(list_untag_vlans[i].encode('hex'), 16))[2:]
-        if len(number_unteg_port) < 96:
-            number_unteg_port = '0' * (96 - len(number_unteg_port)) + number_unteg_port
+        number_untag_port = bin(int(list_untag_vlans[i].encode('hex'), 16))[2:]
+        if len(number_untag_port) < 96:
+            number_untag_port = '0' * (96 - len(number_untag_port)) + number_untag_port
         j = 0
-        for j in range(len(number_unteg_port)):
-            if number_unteg_port[j] == '1': vlans_ports[i + 1][j + 1] = '2'
+        for j in range(len(number_untag_port)):
+            if number_untag_port[j] == '1': vlans_ports[i + 1][j + 1] = '2'
 
     array_ports_numbers = []
     for i, port_number in enumerate(ports_numbers):
@@ -140,8 +187,11 @@ def Report_on_switche(COMMUNITY, IP, html_file):
             j += 1
         i += 1
 
-    HTML(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1)
+    if html_or_wiki == 1:
+        WIKI(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title, WikiToken, Wiki)
+    else:
+        HTML(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title)
 
 
 for i in range(len(switches)):
-    Report_on_switche(switches[i]['COMMUNITY'], switches[i]['IP'], str(i + 1) + '_' + name_html_file)
+    Report_on_switch(switches[i]['COMMUNITY'], switches[i]['IP'])
