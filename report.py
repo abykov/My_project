@@ -6,7 +6,7 @@ from config import *
 
 def Report_on_switch(COMMUNITY, IP):
     '''
-    Report_on_switch(COMMUNITY, IP, html_file)
+    Report_on_switch(COMMUNITY, IP)
 
     Use this function to creates a table of vlans and ports for switches. The main function.
     '''
@@ -27,7 +27,7 @@ def Report_on_switch(COMMUNITY, IP):
 
     def RES(OID, snmp_request):
         '''
-        RES(OID)
+        RES(OID, snmp_request)
 
         From the value of oid returns parameters.
         '''
@@ -64,15 +64,16 @@ def Report_on_switch(COMMUNITY, IP):
 
     def HTML(array_to_html, width_array, length_array, title):
         '''
-        HTML(array_to_html, width_array, length_array)
+        HTML(array_to_html, width_array, length_array, title)
 
         This function creates a html page with a table.
         '''
         html_file = title+'.html'
         file_out = open(html_file, 'w')
         file_out.write(
-            '<html><head><title>' + title + '</title></head><body><p align = "center"><b >' + title + '</b></p>'
-            '<table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr >\n')
+            '<html><head><title>' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
+            '</title></head><body><p align = "center"><b >' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
+            '</b></p><table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr >\n')
         for i in range(length_array):
             for j in range(width_array):
                 if array_to_html[j][i] == '1': char = 'T'
