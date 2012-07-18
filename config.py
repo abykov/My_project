@@ -15,18 +15,19 @@ OID_SWITCH_NAME = '.1.3.6.1.2.1.1.5.0'
 
 
 WIKI_PASS=''
-WIKI_USER='abykov'
+WIKI_USER=''
 WIKI_URL='https://wiki.griddynamics.net/rpc/xmlrpc'
 SPACE = 'SP'
 TOP_PAGE = 'abykov'
 
 
-err_message ='SNMP has returned zero bytes.'
+err_message_snmp ='SNMP has returned zero bytes.'
+err_message_wiki = 'Such a table already exists in the wiki\n'
 key_string = 'Trk'
 name_port = 'Port '
 out_file = 'log.dat'
 snmpw = 'snmpwalk -v2c -c '
 
 
-html_or_wiki = 1 #html_or_wiki = 1 if you want to send the table into the specified wiki page,
+html_or_wiki = 0 #html_or_wiki = 1 if you want to send the table into the specified wiki page,
                  #otherwise send the table to html page

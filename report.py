@@ -1,5 +1,6 @@
 import netsnmp
 import xmlrpclib
+import datetime
 import os
 from config import *
 
@@ -37,7 +38,7 @@ def Report_on_switch(COMMUNITY, IP):
                 oid = netsnmp.VarList(netsnmp.Varbind(OID))
                 res = netsnmp.snmpwalk(oid, Version=2, DestHost=IP, Community=COMMUNITY)
             if res == ():
-                raise RuntimeError(err_message)
+                raise RuntimeError(err_message_snmp)
         except RuntimeError as ErrorMess:
                 print ErrorMess
                 exit()
@@ -94,9 +95,9 @@ def Report_on_switch(COMMUNITY, IP):
         content = ''
         for i in range(length_array):
             for j in range(width_array):
-                if j == 0:
+                if i == 0:
                     content += '||' + array_to_wiki[j][i]
-                    if i == length_array-1: content += '||'
+                    if j == length_array-1: content += '||'
                 else:
                     if array_to_wiki[j][i] == '1': char = 'T'
                     elif array_to_wiki[j][i] == '2': char = 'U'
@@ -112,7 +113,7 @@ def Report_on_switch(COMMUNITY, IP):
             page = {
                 'parentId': parent['id'],
                 'space': SPACE,
-                'title': title,
+                'title': title+' ('+str(datetime.datetime.now())[:-7]+')',
                 'content': table_headers + content
                    }
             Wiki.confluence1.storePage(WikiToken, page)
