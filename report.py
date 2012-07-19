@@ -13,8 +13,14 @@ def Report_on_switch(COMMUNITY, IP):
     string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' > ' + out_file
     os.system(string)
 
-    Wiki = xmlrpclib.ServerProxy(WIKI_URL)
-    WikiToken = Wiki.confluence2.login(WIKI_USER, WIKI_PASS)
+    try:
+        Wiki = xmlrpclib.ServerProxy(WIKI_URL)
+        WikiToken = Wiki.confluence2.login(WIKI_USER, WIKI_PASS)
+    except:
+        if html_or_wiki == 1:
+            print 'Enter your username and password\n'
+            raise
+
 
     try:
         logfile = open(out_file)
