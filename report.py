@@ -71,7 +71,7 @@ def Report_on_switch(COMMUNITY, IP):
         html_file = title+'.html'
         file_out = open(html_file, 'w')
         file_out.write(
-            '<html><head><title>' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
+            '<html><head><title>' + title + \
             '</title></head><body><p align = "center"><b >' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
             '</b></p><table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr >\n')
         for i in range(length_array):
@@ -93,7 +93,7 @@ def Report_on_switch(COMMUNITY, IP):
         This function sends the table to the specified wiki page
         and create a new page, if this page does not exist.
         '''
-        content = ''
+        content = '{wiki}\n'
         for i in range(length_array):
             for j in range(width_array):
                 if i == 0:
@@ -106,19 +106,24 @@ def Report_on_switch(COMMUNITY, IP):
                     else: char = array_to_wiki[j][i]
                     content += '|' + char
             content += '|\n'
+        content += '{wiki}'
+
         try:
-            page = Wiki.confluence2.getPage(WikiToken, SPACE, name_page)
+            page = Wiki.confluence2.getPage(WikiToken, SPACE, title)
+            page['content'] = ' '
+            Wiki.confluence1.updatePage(WikiToken, page, {'versionComment':'','minorEdit':1})
         except:
             parent = Wiki.confluence2.getPage(WikiToken, SPACE, TOP_PAGE)
             table_headers = title+'\n'
             page = {
                 'parentId': parent['id'],
                 'space': SPACE,
-                'title': title+' ('+str(datetime.datetime.now())[:-7]+')',
+                'title': title, #+' ('+str(datetime.datetime.now())[:-7]+')',
                 'content': table_headers + content
                    }
             Wiki.confluence1.storePage(WikiToken, page)
         else:
+            page = Wiki.confluence2.getPage(WikiToken, SPACE, title)
             page['content'] += content
             Wiki.confluence1.updatePage(WikiToken, page, {'versionComment':'','minorEdit':1})
 
