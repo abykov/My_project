@@ -10,14 +10,14 @@ def Report_on_switch(COMMUNITY, IP):
 
     Use this function to creates a table of vlans and ports for switches. The main function.
     '''
-    string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' > ' + out_file
+    string = snmpw + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' -On > ' + out_file
     os.system(string)
 
     try:
         Wiki = xmlrpclib.ServerProxy(WIKI_URL)
         WikiToken = Wiki.confluence2.login(WIKI_USER, WIKI_PASS)
     except:
-        if html_or_wiki == 1:
+        if OUTPUT_TO == 'wiki':
             print 'Enter your username and password\n'
             raise
 
@@ -62,7 +62,7 @@ def Report_on_switch(COMMUNITY, IP):
         while i < length_logfiles:
             x = logfile.readline()
             s = x.split(' ')
-            my_array.append(s[0][29:]) #[29:] - 29 item numbers begin number of vlan
+            my_array.append(s[0][28:]) #[28:] - 29 item numbers begin number of vlan
             i += 1
         return my_array[number]
 
@@ -199,7 +199,7 @@ def Report_on_switch(COMMUNITY, IP):
             j += 1
         i += 1
 
-    if html_or_wiki == 1:
+    if OUTPUT_TO == 'wiki':#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         WIKI(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title, WikiToken, Wiki)
     else:
         HTML(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title)
