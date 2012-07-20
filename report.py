@@ -21,7 +21,6 @@ def Report_on_switch(COMMUNITY, IP):
             print 'Enter your username and password\n'
             raise
 
-
     try:
         logfile = open(out_file)
     except IOError as ErrorMess:
