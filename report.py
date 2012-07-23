@@ -77,8 +77,9 @@ def Report_on_switch(COMMUNITY, IP):
         file_out = open(html_file, 'w')
         file_out.write(
             '<html><head><title>' + title + \
-            '</title></head><body><p align = "center"><b >' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
-            '</b></p><table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr >\n')
+            '</title><style type="text/css">TABLE{background: #fffff0;}TR.even {background: #fffacd;}</style>'
+            '</head><body><p align = "center"><b >' + title+' ('+str(datetime.datetime.now())[:-7]+')' + \
+            '</b></p><table  CELLPADDING = 4 CELLSPACING = 0 border = "1"><tr class="even">\n')
         for i in range(length_array):
             for j in range(width_array):
                 if array_to_html[j][i] == '1': char = 'T'
@@ -86,7 +87,9 @@ def Report_on_switch(COMMUNITY, IP):
                 elif array_to_html[j][i] == '0': char = "-"
                 else: char = array_to_html[j][i]
                 file_out.write('<td  align = "center">' + char + '</td>\n')
-            file_out.write('</tr><tr >\n')
+            if i%2 == 1: file_out.write('</tr><tr class="even">\n')
+            else: file_out.write('</tr><tr >\n')
+
         file_out.write('</tr></table></body></html>')
         file_out.close()
 
@@ -103,13 +106,15 @@ def Report_on_switch(COMMUNITY, IP):
             for j in range(width_array):
                 if i == 0:
                     content += '||' + array_to_wiki[j][i]
-                    if j == length_array-1: content += '||'
+                    #if j == length_array-1: content += '||'
                 else:
                     if array_to_wiki[j][i] == '1': char = 'T'
                     elif array_to_wiki[j][i] == '2': char = 'U'
                     elif array_to_wiki[j][i] == '0': char = "-"
                     else: char = array_to_wiki[j][i]
-                    content += '|' + char
+
+                    if i%2 == 0: content += '||' + char
+                    else: content += '|' + char
             content += '|\n'
         content += '{wiki}'
 
@@ -123,7 +128,7 @@ def Report_on_switch(COMMUNITY, IP):
             page = {
                 'parentId': parent['id'],
                 'space': SPACE,
-                'title': title, #+' ('+str(datetime.datetime.now())[:-7]+')',
+                'title': title,
                 'content': table_headers + content
                    }
             Wiki.confluence1.storePage(WikiToken, page)
@@ -141,8 +146,13 @@ def Report_on_switch(COMMUNITY, IP):
     ports_numbers = list_ports
 
     quantity_of_ports = 0
+    quantity_non_trk_ports = 0
     while list_ports[quantity_of_ports] != list_vlans_names[1]:
         quantity_of_ports += 1
+        if not key_string in list_ports[quantity_of_ports]:
+            quantity_non_trk_ports += 1
+    quantity_non_trk_ports -=1
+
 
     ports_numbers = ports_numbers[:quantity_of_ports - 1]
 
@@ -169,17 +179,17 @@ def Report_on_switch(COMMUNITY, IP):
 
     for i in range(len(list_tag_vlans)):
         number_tag_port = bin(int(list_tag_vlans[i].encode('hex'), 16))[2:]
-        if len(number_tag_port) < 96:
-            number_tag_port = '0' * (96 - len(number_tag_port)) + number_tag_port
+        if len(number_tag_port) < quantity_non_trk_ports*2:
+            number_tag_port = '0' * (quantity_non_trk_ports*2 - len(number_tag_port)) + number_tag_port
         vlans_ports[i + 1][1:] = number_tag_port
 
     list_untag_vlans = RES(OID_UNTAG_PORTS, 'walk')
 
+
     for i in range(len(list_untag_vlans)):
         number_untag_port = bin(int(list_untag_vlans[i].encode('hex'), 16))[2:]
-        if len(number_untag_port) < 96:
-            number_untag_port = '0' * (96 - len(number_untag_port)) + number_untag_port
-        j = 0
+        if len(number_untag_port) < quantity_non_trk_ports*2:
+            number_untag_port = '0' * (quantity_non_trk_ports*2 - len(number_untag_port)) + number_untag_port
         for j in range(len(number_untag_port)):
             if number_untag_port[j] == '1': vlans_ports[i + 1][j + 1] = '2'
 
@@ -199,7 +209,7 @@ def Report_on_switch(COMMUNITY, IP):
             j += 1
         i += 1
 
-    if OUTPUT_TO == 'wiki':#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if OUTPUT_TO == 'wiki':
         WIKI(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title, WikiToken, Wiki)
     else:
         HTML(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title)

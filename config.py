@@ -2,8 +2,11 @@ switches = [
         {'IP': '172.18.82.20',      #sar02-7-asw01
          'COMMUNITY': 'test2012'},
 
-       # {'IP': '172.18.146.4',      #spb04-1-sw
-       #  'COMMUNITY': 'test2012'},
+        #{'IP': '172.18.146.4',      #spb04-1-sw
+        # 'COMMUNITY': 'test2012'},
+
+        #{'IP': '172.18.146.6',       #spb04-1-sw3
+        # 'COMMUNITY': 'test2012'},
            ]
 
 
@@ -29,5 +32,5 @@ out_file = 'log.dat'
 snmpw = 'snmpwalk -v2c -c '
 
 
-OUTPUT_TO = 'html'     #OUTPUT_TO = 'wiki' if you want to send the table into the specified wiki page,
-                            #OUTPUT_TO = 'html' send the table to html page
+OUTPUT_TO = 'wiki'      #OUTPUT_TO = 'wiki' if you want to send the table into the specified wiki page,
+                        #OUTPUT_TO = 'html' send the table to html page
