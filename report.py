@@ -80,7 +80,7 @@ def Report_on_switch(COMMUNITY, IP):
 
     def HTML(array_to_html, width_array, length_array, title, number_of_vlan_array, ports_description_array):
         '''
-        HTML(array_to_html, width_array, length_array, title, ports_description_array)
+        HTML(array_to_html, width_array, length_array, title, number_of_vlan_array, ports_description_array)
 
         This function creates a html page with a table.
         '''
@@ -119,7 +119,8 @@ def Report_on_switch(COMMUNITY, IP):
     def WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, number_of_vlan_array,
              ports_description_array):
         '''
-        WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, ports_description_array)
+        WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, number_of_vlan_array,
+             ports_description_array)
 
         This function sends the table to the specified wiki page
         and create a new page, if this page does not exist.
