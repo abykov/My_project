@@ -9,7 +9,7 @@
 <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong>report</strong></big></big></font></td
 ><td align=right valign=bottom
 ><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:/home/abykov/My_project/report.py">/home/abykov/My_project/report.py</a></font></td></tr></table>
-    <p></p>
+    <p><tt>#&nbsp;-*-&nbsp;coding:&nbsp;utf-8&nbsp;-*-</tt></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#aa55cc">
@@ -17,17 +17,21 @@
 <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
     
 <tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="netsnmp.html">netsnmp</a><br>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="datetime.html">datetime</a><br>
+<a href="netsnmp.html">netsnmp</a><br>
 </td><td width="25%" valign=top><a href="os.html">os</a><br>
-</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<a href="tempfile.html">tempfile</a><br>
+</td><td width="25%" valign=top><a href="xmlrpclib.html">xmlrpclib</a><br>
+</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#eeaa77">
 <td colspan=3 valign=bottom>&nbsp;<br>
 <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
     
 <tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl><dt><a name="-Report_on_switche"><strong>Report_on_switche</strong></a>(COMMUNITY, IP, html_file)</dt><dd><tt><a href="#-Report_on_switche">Report_on_switche</a>(COMMUNITY,&nbsp;IP,&nbsp;html_file)<br>
-Use&nbsp;this&nbsp;function&nbsp;to&nbsp;creates&nbsp;a&nbsp;table&nbsp;of&nbsp;vlans&nbsp;and&nbsp;ports&nbsp;for&nbsp;switches</tt></dd></dl>
+<td width="100%"><dl><dt><a name="-Report_on_switch"><strong>Report_on_switch</strong></a>(COMMUNITY, IP)</dt><dd><tt><a href="#-Report_on_switch">Report_on_switch</a>(COMMUNITY,&nbsp;IP)<br>
+&nbsp;<br>
+Use&nbsp;this&nbsp;function&nbsp;to&nbsp;creates&nbsp;a&nbsp;table&nbsp;of&nbsp;vlans&nbsp;and&nbsp;ports&nbsp;for&nbsp;switches.&nbsp;The&nbsp;main&nbsp;function.</tt></dd></dl>
 </td></tr></table><p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
 <tr bgcolor="#55aa55">
@@ -36,17 +40,24 @@ Use&nbsp;this&nbsp;function&nbsp;to&nbsp;creates&nbsp;a&nbsp;table&nbsp;of&nbsp;
     
 <tr><td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
 <td width="100%"><strong>OID_PORTS</strong> = '.1.3.6.1.2.1.2.2.1.2'<br>
-<strong>OID_SWITCHE_NAMES</strong> = '.1.3.6.1.2.1.1.1.0'<br>
+<strong>OID_PORTS_DESCRIPTION</strong> = '.1.3.6.1.2.1.31.1.1.1.18'<br>
+<strong>OID_SWITCH_NAME</strong> = '.1.3.6.1.2.1.1.5.0'<br>
 <strong>OID_TAG_PORTS</strong> = '.1.3.6.1.2.1.17.7.1.4.3.1.2'<br>
 <strong>OID_UNTAG_PORTS</strong> = '.1.3.6.1.2.1.17.7.1.4.3.1.4'<br>
 <strong>OID_VLANS_NAMES</strong> = '.1.3.6.1.2.1.17.7.1.4.3.1.1'<br>
-<strong>err_message</strong> = 'SNMP has returned zero bytes.'<br>
-<strong>i</strong> = 1<br>
+<strong>OUTPUT_TO</strong> = 'html'<br>
+<strong>SPACE</strong> = 'SP'<br>
+<strong>TOP_PAGE</strong> = 'abykov'<br>
+<strong>WIKI_PASS</strong> = ''<br>
+<strong>WIKI_URL</strong> = 'https://wiki.griddynamics.net/rpc/xmlrpc'<br>
+<strong>WIKI_USER</strong> = ''<br>
+<strong>err_message_snmp</strong> = 'SNMP has returned zero bytes.'<br>
+<strong>err_message_wiki</strong> = 'Such a table already exists in the wiki<font color="#c040c0">\n</font>'<br>
+<strong>i</strong> = 2<br>
 <strong>key_string</strong> = 'Trk'<br>
-<strong>name_html_file</strong> = 'Table.html'<br>
 <strong>name_port</strong> = 'Port '<br>
-<strong>out_file</strong> = 'log.dat'<br>
-<strong>snmpw</strong> = 'snmpwalk -v2c -c '<br>
-<strong>switches</strong> = [{'COMMUNITY': 'test2012', 'IP': '172.18.82.20'}, {'COMMUNITY': 'test2012', 'IP': '172.18.146.4'}]<br>
-<strong>title</strong> = 'Table'</td></tr></table>
+<strong>out_file</strong> = '/tmp/tmpoA_dAd'<br>
+<strong>snmpw</strong> = ['snmpwalk -v2c -c ', '-On &gt;']<br>
+<strong>switches</strong> = [{'COMMUNITY': 'test2012', 'IP': '172.18.82.20'}, {'COMMUNITY': 'test2012', 'IP': '172.18.146.4'}, {'COMMUNITY': 'test2012', 'IP': '172.18.146.6'}]<br>
+<strong>tmpFile</strong> = &lt;open file '&lt;fdopen&gt;', mode 'w+b'&gt;</td></tr></table>
 </body></html>

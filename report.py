@@ -11,7 +11,7 @@ def Report_on_switch(COMMUNITY, IP):
 
     Use this function to creates a table of vlans and ports for switches. The main function.
     '''
-    string = snmpw[0] + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES +' '+snmpw[1] + ' ' + out_file
+    string = snmpw[0] + ' ' + COMMUNITY + ' ' + IP + ' ' + OID_VLANS_NAMES + ' ' + snmpw[1] + ' ' + out_file
     os.system(string)
 
     try:
@@ -116,7 +116,8 @@ def Report_on_switch(COMMUNITY, IP):
         file_out.close()
 
 
-    def WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, number_of_vlan_array, ports_description_array):
+    def WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, number_of_vlan_array,
+             ports_description_array):
         '''
         WIKI(array_to_wiki, width_array, length_array, title, WikiToken, Wiki, ports_description_array)
 
@@ -241,6 +242,8 @@ def Report_on_switch(COMMUNITY, IP):
             ports_description())
     else:
         HTML(vlans_ports, len(list_vlans_names) + 1, len(list_ports) + 1, title, number_of_vlan(), ports_description())
+
+    os.unlink(out_file)
 
 
 for i in range(len(switches)):
